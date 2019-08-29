@@ -23,5 +23,20 @@ namespace SqlLogTransactionManagement.Controllers
 
             }
         }
+
+        [HttpGet]  /* Bu metod sunucudan veri almak için kullanılır.*/
+        public ActionResult AddOrEdit(int id=0)
+        {
+            return View(new Employee());
+
+        }
+
+        [HttpPost] /*Bu metod ile sunucuya veri yazdırabilirsiniz. Bu metodla istek parametreleri hem URL içinde hem de mesaj gövdesinde gönderilebilir. */
+        public ActionResult AddOrEdit()
+        {
+
+            return View();
+        }
+
     }
 }
