@@ -10,12 +10,14 @@
 namespace SqlLogTransactionManagement.Models
 {
     using System;
-    using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Employee
     {
         public int Col1 { get; set; }
         public Nullable<decimal> Col2 { get; set; }
+        [Required(ErrorMessage = "This Field is Required")]
         public string Col3 { get; set; }
+
     }
 }

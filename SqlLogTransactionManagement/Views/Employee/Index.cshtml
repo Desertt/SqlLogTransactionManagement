@@ -7,13 +7,14 @@
 
 <h2>Employee Crud Operations</h2>
 
-<a class="btn btn-info" style="margin-bottom:10px" onclick="PopupForm('@Url.Action("AddOrEdit","Employee")')"><i class="fa fa-plus"></i>Add New </a>
+<a class="btn btn-success" style="margin-bottom:10px" onclick="PopupForm('@Url.Action("AddOrEdit","Employee")')"><i class="fa fa-plus"></i>Add New </a>
 <table id="employeeTable" class="table table-striped table-bordered" style="width:100%">
     <thead>
         <tr>
             <th>Col1</th>
             <th>Col2</th>
             <th>Col3</th>
+            <th></th>
         </tr>
     </thead>
 </table>
@@ -24,7 +25,7 @@
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 }
 
-    <script type="text/javascript" src="http://code.jquery.com/jquery-3.4.1.min.js">
+<script type="text/javascript" src="http://code.jquery.com/jquery-3.4.1.min.js">
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"</script>
 
 
@@ -44,7 +45,12 @@
             "columns": [
                 { "data": "Col1" },
                 { "data": "Col2" },
-                { "data": "Col3" }
+                { "data": "Col3" },
+                {
+                    "data": "Col1", "render": function myfunction() {
+                        return "<a class ='btn btn-primary btn-sm'><i class='far fa - edit'></i>Edit<a/><a class ='btn btn-danger btn-sm'><i class='fa fa - plus'></i >Delete<a/>"
+                    }
+                }
             ],
             "language": {
                 "emptyTable": "No data found,Please Click <b>Add New</b>Button "
@@ -54,9 +60,9 @@
 
     });
 
-    function PopupForm(url) {
+function PopupForm(url) {
     var formDiv = $('<div/>')
-    $get(url).done(function (response) {
+    $.get(url).done(function (response) {
         formDiv.html(response);
         Popup = formDiv.dialog();
         autoOpen: true,
@@ -69,5 +75,30 @@
             }
 
     });
+}
+
+function SubmitForm(form) {
+    $.validator.unobtrusive.parse(form)
+    if ($(form).valid()) {
+
+        $.ajax({
+            type: "POST",
+            url: form.action,
+            data: $(form).serialize(),
+            success: function (data) {
+                if (data.success) {
+                    Popup.dialog('close');
+                    dataTable.ajax.reload();
+
+                    $.notify(data.message, {
+                        globalPosition: "top center",
+                        className: "success"
+                    })
+                }
+            }
+
+        });
+    }
+    return false;
 }
 </script>
