@@ -1,5 +1,6 @@
 ﻿using SqlLogTransactionManagement.Models;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -27,7 +28,17 @@ namespace SqlLogTransactionManagement.Controllers
         [HttpGet]  /* Bu metod sunucudan veri almak için kullanılır.*/
         public ActionResult AddOrEdit(int id = 0)
         {
-            return View(new Employee());
+            if (id == 0)
+                return View(new Employee());
+            else
+            {
+                using (DBModel db = new DBModel())
+                {
+                    return View(db.Employee.Where(x => x.Col1 == id).FirstOrDefault<Employee>());
+                }
+
+            }
+
 
         }
 
@@ -36,11 +47,36 @@ namespace SqlLogTransactionManagement.Controllers
         {
             using (DBModel db = new DBModel())
             {
-                db.Employee.Add(emp);
-                db.SaveChanges();
-                return Json(new { success = true, message = "Saved Successfully" }, JsonRequestBehavior.AllowGet);
+                if (emp.Col1 == 0)
+                {
+                    db.Employee.Add(emp);
+                    db.SaveChanges();
+                    return Json(new { success = true, message = "Saved Successfully" }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    db.Entry(emp).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return Json(new { success = true, message = "Updated Successfully" }, JsonRequestBehavior.AllowGet);
+                }
             }
-            
+
+        }
+
+        [HttpPost]/*Bu metod ile kayıtları silebilirsiniz */
+        public ActionResult Delete(int id)
+        {
+            using (DBModel db = new DBModel())
+            {
+                Employee emp = db.Employee.Where(x => x.Col1 == id).FirstOrDefault<Employee>();
+                db.Employee.Remove(emp);
+                db.SaveChanges();
+                return Json(new { success = true, message = "Deleted Successfully" }, JsonRequestBehavior.AllowGet);
+            }
+
+
+
+
         }
 
     }

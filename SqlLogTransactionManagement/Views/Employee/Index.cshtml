@@ -47,9 +47,12 @@
                 { "data": "Col2" },
                 { "data": "Col3" },
                 {
-                    "data": "Col1", "render": function myfunction() {
-                        return "<a class ='btn btn-primary btn-sm'><i class='far fa - edit'></i>Edit<a/><a class ='btn btn-danger btn-sm'><i class='fa fa - plus'></i >Delete<a/>"
-                    }
+                    "data": "Col1", "render": function (data) {
+                        return "<a class ='btn btn-primary btn-sm' onclick=PopupForm('@Url.Action("AddOrEdit","Employee")/" + data + "')><i class='fa fa - edit'></i> Edit<a/><a class ='btn btn-danger btn-sm' style='margin-left:5px' onclick=Delete("+data+")><i class='fa fa - trash'></i > Delete<a/>"
+                    },
+                    "orderable": false,
+                    "searchable":false,
+                    "width": "150px"
                 }
             ],
             "language": {
@@ -100,5 +103,29 @@ function SubmitForm(form) {
         });
     }
     return false;
-}
+    }
+    function Delete(id) {
+        if (confirm('Are You Sure to Delete this Employee Record ?')) {
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Delete","Employee")/' + id,
+                success: function (data) {
+                    if (data.success) {
+
+                        dataTable.ajax.reload();
+
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "success"
+                        })
+                    }
+
+                }
+
+
+            });
+        }
+    }
+
 </script>
